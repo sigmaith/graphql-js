@@ -8,6 +8,7 @@ import {
 import { GraphQLString } from '../type/scalars';
 import { GraphQLSchema } from '../type/schema';
 
+import type { Human } from './starWarsData';
 import { getDroid, getFriends, getHero, getHuman } from './starWarsData';
 
 /**
@@ -293,11 +294,39 @@ const queryType = new GraphQLObjectType({
   }),
 });
 
+const mutationType = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    createHuman: {
+      type: humanType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        homePlanet: { type: GraphQLString },
+        appearsIn: { type: new GraphQLList(episodeEnum) },
+      },
+      resolve: (_, args) => {
+        const newHuman: Human = {
+          type: 'Human',
+          id: args.id,
+          name: args.name,
+          homePlanet: args.homePlanet,
+          appearsIn: args.appearsIn || [],
+          friends: [],
+        };
+        return newHuman;
+      },
+    },
+  },
+});
+
+
 /**
  * Finally, we construct our schema (whose starting query type is the query
  * type we defined above) and export it.
  */
 export const StarWarsSchema: GraphQLSchema = new GraphQLSchema({
   query: queryType,
+  mutation: mutationType,
   types: [humanType, droidType],
 });

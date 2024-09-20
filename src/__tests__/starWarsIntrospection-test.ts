@@ -36,6 +36,7 @@ describe('Star Wars Introspection Tests', () => {
             { name: 'Episode' },
             { name: 'Droid' },
             { name: 'Query' },
+            { name: 'Mutation' },
             { name: 'Boolean' },
             { name: '__Schema' },
             { name: '__Type' },
@@ -279,6 +280,25 @@ describe('Star Wars Introspection Tests', () => {
                 }
               }
             }
+            mutationType {
+              name
+              fields {
+                name
+                args {
+                  name
+                  description
+                  type {
+                    name
+                    kind
+                    ofType {
+                      name
+                      kind
+                    }
+                  }
+                  defaultValue
+                }
+              }
+        }
           }
         }
       `);
@@ -333,6 +353,65 @@ describe('Star Wars Introspection Tests', () => {
                       ofType: {
                         kind: 'SCALAR',
                         name: 'String',
+                      },
+                    },
+                    defaultValue: null,
+                  },
+                ],
+              },
+            ],
+          },
+          mutationType: {
+            name: 'Mutation',
+            fields: [
+              {
+                name: 'createHuman',
+                args: [
+                  {
+                    name: 'id',
+                    description: null,
+                    type: {
+                      kind: 'NON_NULL',
+                      name: null,
+                      ofType: {
+                        kind: 'SCALAR',
+                        name: 'String',
+                      },
+                    },
+                    defaultValue: null,
+                  },
+                  {
+                    name: 'name',
+                    description: null,
+                    type: {
+                      kind: 'NON_NULL',
+                      name: null,
+                      ofType: {
+                        kind: 'SCALAR',
+                        name: 'String',
+                      },
+                    },
+                    defaultValue: null,
+                  },
+                  {
+                    name: 'homePlanet',
+                    description: null,
+                    type: {
+                      kind: 'SCALAR',
+                      name: 'String',
+                      ofType: null,
+                    },
+                    defaultValue: null,
+                  },
+                  {
+                    name: 'appearsIn',
+                    description: null,
+                    type: {
+                      kind: 'LIST',
+                      name: null,
+                      ofType: {
+                        kind: 'ENUM',
+                        name: 'Episode',
                       },
                     },
                     defaultValue: null,

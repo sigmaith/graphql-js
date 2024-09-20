@@ -6,8 +6,9 @@ import { Source } from '../language/source';
 
 import { validate } from '../validation/validate';
 
-import { StarWarsSchema } from './starWarsSchema';
+import { graphql } from '../graphql';
 
+import { StarWarsSchema } from './starWarsSchema';
 /**
  * Helper function to test a query and the expected response.
  */
@@ -115,5 +116,45 @@ describe('Star Wars Validation Tests', () => {
       `;
       return expect(validationErrors(query)).to.be.empty;
     });
+
+    it('Allows adding a new Human and validates against schema', async () => {
+      const mutation = `
+      mutation {
+      createHuman(
+        id: "1010",
+        name: "Rey",
+        homePlanet: "Jakku",
+        appearsIn: [NEW_HOPE]
+      ) {
+        id
+        name
+        homePlanet
+        appearsIn
+      }
+    }
+  `;
+
+      const result = await graphql({ schema: StarWarsSchema, source: mutation });
+
+      if (result.errors) {
+        throw new Error(`GraphQL Errors: ${JSON.stringify(result.errors)}`);
+      }
+
+      if (!result.data || !result.data.createHuman) {
+        throw new Error(`Unexpected result: ${JSON.stringify(result)}`);
+      }
+
+      expect(result.data?.createHuman).to.deep.equal({
+        id: '1010',
+        name: 'Rey',
+        homePlanet: 'Jakku',
+        appearsIn: ['NEW_HOPE']
+      });
+
+      // Validate against schema
+      const schemaValidationErrors = validate(StarWarsSchema, parse(mutation));
+      expect(schemaValidationErrors).have.lengthOf(0);
+    });
   });
 });
+
